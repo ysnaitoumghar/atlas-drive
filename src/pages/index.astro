@@ -1,0 +1,21 @@
+---
+import { siteConfig } from '../config/site.config';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const target = `${base}/${siteConfig.languages[0].code}/`;
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>{siteConfig.brand.name}</title>
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <script is:inline define:vars={{ target }}>
+      // Pick the visitor's language on first load.
+      var l = (navigator.language || 'fr').slice(0, 2);
+      var base = target.replace(/fr\/$/, '');
+      location.replace(['fr', 'en', 'ar'].indexOf(l) > -1 ? base + l + '/' : target);
+    </script>
+  </head>
+  <body style="background:#0b0b0d"></body>
+</html>

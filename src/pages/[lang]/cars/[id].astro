@@ -1,0 +1,154 @@
+---
+import { siteConfig, type Lang } from '../../../config/site.config';
+import { useT, href, L, img, locale } from '../../../i18n/ui';
+import Layout from '../../../layouts/Layout.astro';
+import CarCard from '../../../components/CarCard.astro';
+import Icon from '../../../components/Icon.astro';
+
+export function getStaticPaths() {
+  return siteConfig.languages.flatMap((l) =>
+    siteConfig.cars.map((car) => ({ params: { lang: l.code, id: car.id }, props: { car } }))
+  );
+}
+const lang = Astro.params.lang as Lang;
+const { car } = Astro.props;
+const t = useT(lang);
+const name = `${car.brand} ${car.model}`;
+const nf = new Intl.NumberFormat(locale(lang));
+const similar = siteConfig.cars.filter((c) => c.id !== car.id && (c.category === car.category || Math.abs(c.price - car.price) < 250)).slice(0, 3);
+const specs = [
+  { icon: 'seat', label: t.catalog.seats, value: String(car.seats) },
+  { icon: 'gear', label: t.catalog.gearbox, value: t.gearbox[car.gearbox as keyof typeof t.gearbox] },
+  { icon: 'fuel', label: t.catalog.fuel, value: t.fuel[car.fuel as keyof typeof t.fuel] },
+  { icon: 'bag', label: t.car.bags, value: String(car.bags) },
+  { icon: 'snow', label: t.car.ac, value: '✓' },
+  { icon: 'calendar', label: t.car.year, value: String(car.year) },
+];
+const locs = siteConfig.locations.map((l) => ({ id: l.id, name: L(l.name, lang) }));
+---
+<Layout lang={lang} path={`cars/${car.id}/`} title={name} description={L(car.desc, lang)} image={img(car.images[0], 1200)}>
+  <section class="pt-28 pb-16">
+    <div class="container-x">
+      <a href={href(lang, 'cars/')} class="inline-flex items-center gap-2 text-sm text-muted hover:text-gold mb-6"><Icon name="arrow" class="w-4 h-4 rotate-180 rtl:rotate-0" />{t.car.back}</a>
+
+      <div class="grid gap-10 lg:grid-cols-[1.35fr_1fr]">
+        <!-- Gallery -->
+        <div class="reveal">
+          <div class="relative aspect-[16/10] rounded-[1.25rem] overflow-hidden border border-line bg-surface">
+            <img id="main-img" src={img(car.images[0], 1400)} alt={name} class="w-full h-full object-cover" fetchpriority="high" onerror="this.style.display='none'" />
+          </div>
+          <div class="grid grid-cols-3 gap-3 mt-3" role="group" aria-label={t.car.gallery}>
+            {car.images.map((id, i) => (
+              <button type="button" data-full={img(id, 1400)} class:list={['thumb aspect-[16/10] rounded-xl overflow-hidden border bg-surface transition', i === 0 ? 'border-gold' : 'border-line opacity-70 hover:opacity-100']}>
+                <img src={img(id, 400)} alt={`${name} ${i + 1}`} loading="lazy" class="w-full h-full object-cover" onerror="this.style.display='none'" />
+              </button>
+            ))}
+          </div>
+
+          <div class="mt-10">
+            <h2 class="font-display text-2xl">{t.car.specs}</h2>
+            <p class="text-muted mt-3 max-w-prose leading-relaxed">{L(car.desc, lang)}</p>
+            <dl class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
+              {specs.map((s) => (
+                <div class="card p-4 flex items-center gap-3">
+                  <Icon name={s.icon} class="w-6 h-6 text-gold shrink-0" />
+                  <div><dt class="text-xs text-muted">{s.label}</dt><dd class="font-semibold">{s.value}</dd></div>
+                </div>
+              ))}
+            </dl>
+            <ul class="grid sm:grid-cols-2 gap-2 mt-6">
+              {t.car.includes.map((i) => <li class="flex items-center gap-2 text-sm"><Icon name="check" class="w-4 h-4 text-gold" />{i}</li>)}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Booking panel -->
+        <aside class="reveal" style="--d:120ms">
+          <div class="card p-6 lg:sticky lg:top-24">
+            <p class="text-xs uppercase tracking-[.2em] text-muted">{car.brand} · {t.category[car.category as keyof typeof t.category]}</p>
+            <h1 class="font-display text-3xl mt-1">{car.model}</h1>
+            <p class="mt-4"><span class="font-display text-4xl text-gold">{nf.format(car.price)}</span> <span class="text-muted text-sm">{siteConfig.currency} {t.car.perDay}</span></p>
+
+            <form id="book" class="grid gap-4 mt-6"
+              data-price={car.price} data-car={name} data-wa={siteConfig.whatsapp} data-brand={siteConfig.brand.name}
+              data-tpl={t.wa.book} data-unset={t.wa.unset} data-locale={locale(lang)} data-days={t.car.days}
+              data-currency={siteConfig.currency} data-pick={t.car.pickMsg}>
+              <div>
+                <label class="label" for="b-pickup">{t.hero.pickup}</label>
+                <select id="b-pickup" class="field">
+                  {locs.map((l) => <option value={l.id}>{l.name}</option>)}
+                </select>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="label" for="b-from">{t.hero.from}</label><input id="b-from" type="date" class="field" /></div>
+                <div><label class="label" for="b-to">{t.hero.to}</label><input id="b-to" type="date" class="field" /></div>
+              </div>
+              <div class="rounded-xl border border-line px-4 py-3 text-sm flex justify-between items-center gap-3">
+                <span class="text-muted">{t.car.total}</span>
+                <span id="b-total" class="font-semibold text-gold text-end">{t.car.pickMsg}</span>
+              </div>
+              <a id="b-wa" href="#" target="_blank" rel="noopener" class="btn btn-wa"><Icon name="whatsapp" class="w-5 h-5" />{t.car.book}</a>
+            </form>
+            <script set:html={`window.__locs=${JSON.stringify(Object.fromEntries(locs.map((l) => [l.id, l.name])))}`}></script>
+          </div>
+        </aside>
+      </div>
+
+      {similar.length > 0 && (
+        <div class="mt-24">
+          <h2 class="font-display text-3xl mb-8 reveal">{t.car.similar}</h2>
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {similar.map((c, i) => <CarCard car={c} lang={lang} delay={i * 100} />)}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <script>
+    // Gallery
+    const main = document.getElementById('main-img') as HTMLImageElement;
+    document.querySelectorAll<HTMLButtonElement>('.thumb').forEach((b) =>
+      b.addEventListener('click', () => {
+        main.style.display = ''; main.src = b.dataset.full!;
+        document.querySelectorAll('.thumb').forEach((x) => { x.classList.remove('border-gold'); x.classList.add('border-line', 'opacity-70'); });
+        b.classList.add('border-gold'); b.classList.remove('border-line', 'opacity-70');
+      })
+    );
+
+    // Booking
+    const form = document.getElementById('book') as HTMLFormElement;
+    const d = form.dataset;
+    const pickup = document.getElementById('b-pickup') as HTMLSelectElement;
+    const from = document.getElementById('b-from') as HTMLInputElement;
+    const to = document.getElementById('b-to') as HTMLInputElement;
+    const total = document.getElementById('b-total')!;
+    const wa = document.getElementById('b-wa') as HTMLAnchorElement;
+    const locs: Record<string, string> = (window as any).__locs;
+
+    const iso = (x: Date) => new Date(x.getTime() - x.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    const addDays = (s: string, n: number) => { const x = new Date(s + 'T00:00'); x.setDate(x.getDate() + n); return iso(x); };
+    const fmt = (s: string) => new Date(s + 'T00:00').toLocaleDateString(d.locale, { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const q = new URLSearchParams(location.search);
+    from.min = iso(new Date());
+    if (q.get('pickup') && locs[q.get('pickup')!]) pickup.value = q.get('pickup')!;
+    if (q.get('from')) from.value = q.get('from')!;
+    if (q.get('to')) to.value = q.get('to')!;
+
+    function update() {
+      if (from.value) to.min = addDays(from.value, 1);
+      if (from.value && to.value && to.value <= from.value) to.value = addDays(from.value, 1);
+      const days = from.value && to.value ? Math.round((+new Date(to.value) - +new Date(from.value)) / 864e5) : 0;
+      total.textContent = days > 0
+        ? `${new Intl.NumberFormat(d.locale).format(days * Number(d.price))} ${d.currency} · ${days} ${d.days}`
+        : d.pick!;
+      const text = (d.tpl || '')
+        .replace('{brand}', d.brand!).replace('{car}', d.car!).replace('{pickup}', locs[pickup.value])
+        .replace('{from}', from.value ? fmt(from.value) : d.unset!).replace('{to}', to.value ? fmt(to.value) : d.unset!);
+      wa.href = `https://wa.me/${d.wa}?text=${encodeURIComponent(text)}`;
+    }
+    [pickup, from, to].forEach((el) => el.addEventListener('input', update));
+    update();
+  </script>
+</Layout>

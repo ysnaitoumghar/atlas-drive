@@ -1,0 +1,50 @@
+---
+import { siteConfig, type Lang } from '../config/site.config';
+import { useT, href } from '../i18n/ui';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+
+const { lang, path = '' } = Astro.props as { lang: Lang; path?: string };
+const t = useT(lang);
+const home = href(lang);
+const links = [
+  { label: t.nav.cars, href: href(lang, 'cars/') },
+  { label: t.nav.locations, href: `${home}#locations` },
+  { label: t.nav.why, href: `${home}#why` },
+  { label: t.nav.reviews, href: `${home}#reviews` },
+  { label: t.nav.faq, href: `${home}#faq` },
+  { label: t.nav.contact, href: `${home}#contact` },
+];
+---
+<header id="site-header" class="fixed top-0 inset-x-0 z-40 border-b border-transparent transition-colors duration-200">
+  <div class="container-x flex items-center justify-between h-[4.5rem]">
+    <a href={home} aria-label={siteConfig.brand.name}><Logo /></a>
+
+    <nav class="hidden lg:flex items-center gap-8 text-sm text-muted" aria-label="Main">
+      {links.map((l) => <a href={l.href} class="hover:text-ink transition-colors duration-150">{l.label}</a>)}
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <div class="flex items-center rounded-[10px] border border-line p-0.5 text-xs font-medium" role="group" aria-label={t.lang}>
+        {siteConfig.languages.map((l) => (
+          <a
+            href={href(l.code, path)}
+            hreflang={l.code}
+            aria-current={l.code === lang ? 'true' : undefined}
+            class:list={['px-2.5 h-7 grid place-items-center rounded-md transition-colors duration-150', l.code === lang ? 'bg-surface-high text-ink shadow-[inset_0_1px_0_rgba(255,255,255,.08)]' : 'text-muted hover:text-ink']}
+          >{l.short}</a>
+        ))}
+      </div>
+      <button id="menu-btn" class="lg:hidden grid place-items-center w-10 h-10 rounded-lg border border-line" aria-label={t.menu} aria-expanded="false" aria-controls="mobile-menu">
+        <span class="i-open"><Icon name="menu" /></span>
+        <span class="i-close hidden"><Icon name="close" /></span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" class="hidden lg:hidden border-t border-line bg-bg" aria-label="Mobile">
+    <div class="container-x py-4 flex flex-col">
+      {links.map((l) => <a href={l.href} class="py-3 border-b border-line text-base hover:text-muted transition-colors">{l.label}</a>)}
+    </div>
+  </nav>
+</header>

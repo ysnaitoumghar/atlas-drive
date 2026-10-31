@@ -1,0 +1,44 @@
+---
+import { siteConfig, type Lang, type Car } from '../config/site.config';
+import { useT, href, img } from '../i18n/ui';
+import Icon from './Icon.astro';
+const { car, lang, delay = 0 } = Astro.props as { car: Car; lang: Lang; delay?: number };
+const t = useT(lang);
+const price = new Intl.NumberFormat(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-GB' : 'fr-FR').format(car.price);
+---
+<article
+  class="car-card card card-hover reveal overflow-hidden group flex flex-col"
+  style={`--d:${delay}ms`}
+  data-brand={car.brand}
+  data-gearbox={car.gearbox}
+  data-fuel={car.fuel}
+  data-seats={car.seats}
+  data-price={car.price}
+>
+  <a href={href(lang, `cars/${car.id}/`)} data-car-link class="flex flex-col h-full">
+    <div class="relative aspect-[16/10] overflow-hidden bg-surface-high">
+      <img
+        src={img(car.images[0], 800)}
+        alt={`${car.brand} ${car.model}`}
+        loading="lazy"
+        width="800" height="500"
+        class="w-full h-full object-cover"
+        onerror="this.style.display='none'"
+      />
+      <span class="absolute top-3 start-3 text-xs font-medium bg-bg/85 px-2 py-1 rounded-md text-muted border border-line">{t.category[car.category as keyof typeof t.category]}</span>
+    </div>
+    <div class="p-5 flex flex-col flex-1">
+      <p class="text-sm text-faint">{car.brand}</p>
+      <h3 class="text-lg font-medium mt-1">{car.model}</h3>
+      <div class="flex flex-wrap gap-x-4 gap-y-2 mt-4">
+        <span class="chip"><Icon name="seat" class="w-4 h-4 text-faint" />{car.seats} {t.car.seats}</span>
+        <span class="chip"><Icon name="gear" class="w-4 h-4 text-faint" />{t.gearbox[car.gearbox as keyof typeof t.gearbox]}</span>
+        <span class="chip"><Icon name="fuel" class="w-4 h-4 text-faint" />{t.fuel[car.fuel as keyof typeof t.fuel]}</span>
+      </div>
+      <div class="mt-auto pt-5 flex items-end justify-between">
+        <p><span class="figure text-xl text-ink">{price}</span> <span class="text-[.8125rem] text-faint">{siteConfig.currency} {t.car.perDay}</span></p>
+        <span class="inline-flex items-center gap-1 text-sm text-muted group-hover:text-ink transition-colors duration-150">{t.car.details}<Icon name="arrow" class="w-4 h-4 rtl:rotate-180" /></span>
+      </div>
+    </div>
+  </a>
+</article>

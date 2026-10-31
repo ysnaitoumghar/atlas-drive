@@ -1,0 +1,39 @@
+---
+import { siteConfig, type Lang } from '../config/site.config';
+import { useT, href, L } from '../i18n/ui';
+import Logo from './Logo.astro';
+const { lang } = Astro.props as { lang: Lang };
+const t = useT(lang);
+const home = href(lang);
+const year = new Date().getFullYear();
+---
+<footer class="route-line mt-10">
+  <div class="container-x py-14 grid gap-10 md:grid-cols-3">
+    <div>
+      <Logo />
+      <p class="text-muted text-sm mt-4 max-w-xs">{siteConfig.brand.tagline[lang]}</p>
+    </div>
+    <div>
+      <h3 class="text-sm font-medium mb-4">{t.footer.links}</h3>
+      <ul class="space-y-2 text-sm text-muted">
+        <li><a class="hover:text-ink transition-colors" href={href(lang, 'cars/')}>{t.nav.cars}</a></li>
+        <li><a class="hover:text-ink transition-colors" href={`${home}#locations`}>{t.nav.locations}</a></li>
+        <li><a class="hover:text-ink transition-colors" href={`${home}#faq`}>{t.nav.faq}</a></li>
+        <li><a class="hover:text-ink transition-colors" href={`${home}#contact`}>{t.nav.contact}</a></li>
+      </ul>
+    </div>
+    <div class="text-sm text-muted space-y-2">
+      <h3 class="text-sm font-medium mb-4">{t.nav.contact}</h3>
+      <p dir="ltr" class="text-start">{siteConfig.contact.phone}</p>
+      <p>{siteConfig.contact.email}</p>
+      <p>{siteConfig.contact.address}</p>
+      <p>{L(siteConfig.contact.hours, lang)}</p>
+    </div>
+  </div>
+  <div class="border-t border-line">
+    <div class="container-x py-5 flex flex-wrap gap-2 justify-between text-xs text-muted">
+      <span>© {year} {siteConfig.brand.name}. {t.footer.rights}</span>
+      <span>{t.footer.demo}</span>
+    </div>
+  </div>
+</footer>

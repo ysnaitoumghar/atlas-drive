@@ -1,0 +1,181 @@
+---
+import { siteConfig, type Lang } from '../../config/site.config';
+import { useT, href, L } from '../../i18n/ui';
+import Layout from '../../layouts/Layout.astro';
+import SearchBar from '../../components/SearchBar.astro';
+import CarCard from '../../components/CarCard.astro';
+import Icon from '../../components/Icon.astro';
+
+export function getStaticPaths() {
+  return siteConfig.languages.map((l) => ({ params: { lang: l.code } }));
+}
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const featured = siteConfig.cars.filter((c) => c.featured).slice(0, 6);
+const { lat, lng, zoom } = siteConfig.map;
+const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.006},${lat - 0.0035},${lng + 0.006},${lat + 0.0035}&layer=mapnik&marker=${lat},${lng}`;
+const mapLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=${zoom}/${lat}/${lng}`;
+---
+<Layout lang={lang} path="" image={siteConfig.heroImage}>
+  <!-- HERO -->
+  <section class="relative min-h-[100svh] flex items-center overflow-hidden pt-32 pb-16">
+    <img src={siteConfig.heroImage} alt="" class="absolute inset-0 w-full h-full object-cover" fetchpriority="high" onerror="this.style.display='none'" />
+    <div class="hero-scrim absolute inset-0"></div>
+    <div class="container-x relative w-full">
+      <p class="eyebrow reveal">{t.hero.eyebrow}</p>
+      <h1 class="reveal font-display font-normal text-[2.5rem] sm:text-6xl lg:text-7xl leading-[1.05] tracking-[-0.03em] rtl:tracking-normal mt-4 max-w-3xl" style="--d:60ms">
+        {t.hero.title1} <span class="text-muted">{t.hero.title2}</span>
+      </h1>
+      <p class="reveal text-muted text-lg leading-7 max-w-xl mt-6" style="--d:120ms">{t.hero.sub}</p>
+      <div class="reveal mt-10 max-w-4xl" style="--d:180ms"><SearchBar lang={lang} /></div>
+      <dl class="reveal mt-10 flex flex-wrap gap-x-10 gap-y-4" style="--d:240ms">
+        {t.hero.stats.map(([n, l]) => (
+          <div><dt class="figure text-2xl text-ink">{n}</dt><dd class="text-[.8125rem] leading-4 text-muted mt-1">{l}</dd></div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- FEATURED -->
+  <section id="featured" class="section">
+    <div class="container-x">
+      <div class="flex flex-wrap items-end justify-between gap-6 mb-12">
+        <div class="reveal">
+          <h2 class="h2">{t.featured.title}</h2>
+          <p class="text-muted mt-3 max-w-lg">{t.featured.sub}</p>
+        </div>
+        <a href={href(lang, 'cars/')} class="btn btn-ghost reveal">{t.featured.all}<Icon name="arrow" class="w-4 h-4 rtl:rotate-180" /></a>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {featured.map((car, i) => <CarCard car={car} lang={lang} delay={(i % 3) * 60} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCATIONS -->
+  <section id="locations" class="section bg-surface/40 border-y border-line">
+    <div class="container-x">
+      <div class="reveal max-w-2xl mb-12">
+        <h2 class="h2">{t.locations.title}</h2>
+        <p class="text-muted mt-3">{t.locations.sub}</p>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        {siteConfig.locations.map((loc, i) => (
+          <div class="card card-hover reveal p-6 flex flex-col" style={`--d:${i * 60}ms`}>
+            <span class="grid place-items-center w-10 h-10 rounded-lg border border-line bg-surface-high text-muted"><Icon name={loc.icon} class="w-5 h-5" /></span>
+            <h3 class="text-xl font-medium mt-5">{L(loc.name, lang)}</h3>
+            <p class="text-muted text-sm leading-5 mt-2 flex gap-2"><span class="h-5 grid place-items-center shrink-0"><Icon name="pin" class="w-4 h-4 text-faint" /></span>{L(loc.address, lang)}</p>
+            <p class="text-muted text-sm leading-5 mt-1 flex gap-2"><span class="h-5 grid place-items-center shrink-0"><Icon name="clock" class="w-4 h-4 text-faint" /></span>{t.locations.hours}: {L(loc.hours, lang)}</p>
+            <a href={`${href(lang, 'cars/')}?pickup=${loc.id}`} class="mt-auto pt-6 inline-flex items-center gap-2 text-ink text-sm font-medium hover:text-muted transition-colors duration-150">{t.locations.choose}<Icon name="arrow" class="w-4 h-4 rtl:rotate-180" /></a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section id="why" class="section">
+    <div class="container-x">
+      <div class="reveal max-w-2xl mb-12">
+        <h2 class="h2">{t.why.title}</h2>
+      </div>
+      <div class="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        {t.why.items.map(([title, text, icon], i) => (
+          <div class="reveal" style={`--d:${i * 60}ms`}>
+            <span class="grid place-items-center w-10 h-10 rounded-lg border border-line bg-surface-high text-muted"><Icon name={icon} class="w-5 h-5" /></span>
+            <h3 class="text-lg font-medium mt-5">{title}</h3>
+            <p class="text-muted text-sm mt-2 leading-6">{text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section id="reviews" class="section bg-surface/40 border-y border-line">
+    <div class="container-x">
+      <div class="reveal max-w-2xl mb-12">
+        <h2 class="h2">{t.reviews.title}</h2>
+        {siteConfig.reviews.sample && (
+          <p class="mt-3 flex flex-wrap items-center gap-2 text-sm text-faint"><span class="tag">{t.reviews.sampleTag}</span>{t.reviews.sampleNote}</p>
+        )}
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+        {siteConfig.reviews.items.map((r, i) => (
+          <figure class="card reveal p-6" style={`--d:${(i % 2) * 60}ms`}>
+            <blockquote class="text-lg leading-7">“{L(r.text, lang)}”</blockquote>
+            <figcaption class="mt-6 flex items-center gap-3">
+              <span class="grid place-items-center w-10 h-10 rounded-full bg-surface-high text-muted font-medium">{L(r.name, lang).charAt(0)}</span>
+              <span class="text-sm"><span class="block font-medium">{L(r.name, lang)}</span><span class="text-faint">{L(r.city, lang)}</span></span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section">
+    <div class="container-x grid gap-12 lg:grid-cols-[1fr_1.6fr]">
+      <div class="reveal">
+        <h2 class="h2">{t.faq.title}</h2>
+      </div>
+      <div class="divide-y divide-line border-y border-line reveal">
+        {t.faq.items.map(([q, a]) => (
+          <details class="group py-5">
+            <summary class="flex items-center justify-between gap-6 text-base font-medium">
+              {q}
+              <span class="faq-plus shrink-0 grid place-items-center w-8 h-8 rounded-lg border border-line text-muted transition-transform duration-200"><Icon name="plus" class="w-4 h-4" /></span>
+            </summary>
+            <p class="text-muted mt-3 leading-6 max-w-prose">{a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section bg-surface/40 border-t border-line">
+    <div class="container-x grid gap-12 lg:grid-cols-2">
+      <div class="reveal">
+        <h2 class="h2">{t.contact.title}</h2>
+        <p class="text-muted mt-3 max-w-md">{t.contact.sub}</p>
+
+        <ul class="mt-8 space-y-4 text-sm leading-5">
+          <li class="flex gap-3"><Icon name="phone" class="w-4 h-4 text-faint" /><span><span class="block text-faint text-xs leading-4">{t.contact.phone}</span><span dir="ltr" class="figure">{siteConfig.contact.phone}</span></span></li>
+          <li class="flex gap-3"><Icon name="mail" class="w-4 h-4 text-faint" /><span><span class="block text-faint text-xs leading-4">{t.contact.email}</span>{siteConfig.contact.email}</span></li>
+          <li class="flex gap-3"><Icon name="pin" class="w-4 h-4 text-faint" /><span><span class="block text-faint text-xs leading-4">{t.contact.address}</span>{siteConfig.contact.address}</span></li>
+          <li class="flex gap-3"><Icon name="clock" class="w-4 h-4 text-faint" /><span><span class="block text-faint text-xs leading-4">{t.contact.hours}</span>{L(siteConfig.contact.hours, lang)}</span></li>
+        </ul>
+
+        <form id="contact-form" class="mt-8 grid gap-4" data-tpl={t.wa.contact} data-wa={siteConfig.whatsapp} data-brand={siteConfig.brand.name}>
+          <div><label class="label" for="c-name">{t.contact.name}</label><input id="c-name" class="field" required /></div>
+          <div><label class="label" for="c-msg">{t.contact.message}</label><textarea id="c-msg" rows="3" class="field" required></textarea></div>
+          <button class="btn btn-wa justify-self-start" type="submit"><Icon name="whatsapp" class="w-5 h-5" />{t.contact.send}</button>
+        </form>
+      </div>
+
+      <div class="reveal flex flex-col gap-3" style="--d:60ms">
+        <iframe
+          title={t.contact.map}
+          src={mapSrc}
+          loading="lazy"
+          referrerpolicy="no-referrer"
+          class="block w-full flex-1 min-h-[22rem] rounded-2xl border border-line bg-surface"
+        ></iframe>
+        <a href={mapLink} target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm text-muted hover:text-ink transition-colors duration-150 self-start">{t.contact.openMap}<Icon name="arrow" class="w-4 h-4 rtl:rotate-180" /></a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const f = document.getElementById('contact-form') as HTMLFormElement | null;
+    f?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = (document.getElementById('c-name') as HTMLInputElement).value.trim();
+      const message = (document.getElementById('c-msg') as HTMLTextAreaElement).value.trim();
+      const text = (f.dataset.tpl || '').replace('{brand}', f.dataset.brand || '').replace('{name}', name).replace('{message}', message);
+      window.open(`https://wa.me/${f.dataset.wa}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+    });
+  </script>
+</Layout>

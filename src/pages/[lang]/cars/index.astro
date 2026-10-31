@@ -1,0 +1,118 @@
+---
+import { siteConfig, type Lang } from '../../../config/site.config';
+import { useT, L } from '../../../i18n/ui';
+import Layout from '../../../layouts/Layout.astro';
+import CarCard from '../../../components/CarCard.astro';
+import Icon from '../../../components/Icon.astro';
+
+export function getStaticPaths() {
+  return siteConfig.languages.map((l) => ({ params: { lang: l.code } }));
+}
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const cars = [...siteConfig.cars].sort((a, b) => a.price - b.price);
+const brands = [...new Set(cars.map((c) => c.brand))].sort();
+const gearboxes = [...new Set(cars.map((c) => c.gearbox))];
+const fuels = [...new Set(cars.map((c) => c.fuel))];
+const seatOpts = [...new Set(cars.map((c) => c.seats))].sort((a, b) => a - b);
+const maxPrice = Math.ceil(Math.max(...cars.map((c) => c.price)) / 50) * 50;
+const minPrice = Math.floor(Math.min(...cars.map((c) => c.price)) / 50) * 50;
+const locNames = Object.fromEntries(siteConfig.locations.map((l) => [l.id, L(l.name, lang)]));
+---
+<Layout lang={lang} path="cars/" title={t.catalog.title} description={t.catalog.sub}>
+  <section class="pt-32 pb-8 border-b border-line bg-gradient-to-b from-surface/60 to-transparent">
+    <div class="container-x">
+      <p class="eyebrow">{t.catalog.eyebrow}</p>
+      <h1 class="h2 !mt-3">{t.catalog.title}</h1>
+      <p class="text-muted mt-3 max-w-xl">{t.catalog.sub}</p>
+      <p id="trip-summary" class="hidden mt-5 inline-flex flex-wrap items-center gap-x-5 gap-y-2 text-sm card px-4 py-2.5" data-locs={JSON.stringify(locNames)}></p>
+    </div>
+  </section>
+
+  <section class="section !pt-10">
+    <div class="container-x grid gap-8 lg:grid-cols-[17rem_1fr]">
+      <aside>
+        <details id="filters" class="card p-5 lg:sticky lg:top-24" open>
+          <summary class="flex items-center justify-between font-display text-lg lg:pointer-events-none">
+            <span class="flex items-center gap-2"><Icon name="filter" class="w-5 h-5 text-gold" />{t.catalog.filters}</span>
+          </summary>
+          <div class="grid gap-5 mt-5">
+            <div><label class="label" for="f-brand">{t.catalog.brand}</label>
+              <select id="f-brand" class="field"><option value="">{t.catalog.all}</option>{brands.map((b) => <option value={b}>{b}</option>)}</select></div>
+            <div><label class="label" for="f-gearbox">{t.catalog.gearbox}</label>
+              <select id="f-gearbox" class="field"><option value="">{t.catalog.all}</option>{gearboxes.map((g) => <option value={g}>{t.gearbox[g as keyof typeof t.gearbox]}</option>)}</select></div>
+            <div><label class="label" for="f-fuel">{t.catalog.fuel}</label>
+              <select id="f-fuel" class="field"><option value="">{t.catalog.all}</option>{fuels.map((f) => <option value={f}>{t.fuel[f as keyof typeof t.fuel]}</option>)}</select></div>
+            <div><label class="label" for="f-seats">{t.catalog.seats}</label>
+              <select id="f-seats" class="field"><option value="0">{t.catalog.all}</option>{seatOpts.map((s) => <option value={s}>{s}+</option>)}</select></div>
+            <div>
+              <label class="label flex justify-between" for="f-price"><span>{t.catalog.price}</span><span class="text-gold normal-case tracking-normal"><output id="f-price-out">{maxPrice}</output> {siteConfig.currency}</span></label>
+              <input id="f-price" type="range" min={minPrice} max={maxPrice} step="50" value={maxPrice} />
+            </div>
+            <button id="f-reset" type="button" class="btn btn-ghost !py-2.5 text-sm">{t.catalog.reset}</button>
+          </div>
+        </details>
+      </aside>
+
+      <div>
+        <p class="text-sm text-muted mb-5"><span id="count" class="text-gold font-semibold">{cars.length}</span> {t.catalog.results}</p>
+        <div id="grid" class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {cars.map((car, i) => <CarCard car={car} lang={lang} delay={(i % 3) * 80} />)}
+        </div>
+        <p id="empty" class="hidden text-center text-muted py-20">{t.catalog.none}</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const cards = [...document.querySelectorAll<HTMLElement>('.car-card')];
+    const brand = $<HTMLSelectElement>('f-brand'), gearbox = $<HTMLSelectElement>('f-gearbox'),
+      fuel = $<HTMLSelectElement>('f-fuel'), seats = $<HTMLSelectElement>('f-seats'),
+      price = $<HTMLInputElement>('f-price'), out = $<HTMLElement>('f-price-out');
+
+    function apply() {
+      out.textContent = price.value;
+      let n = 0;
+      cards.forEach((c) => {
+        const d = c.dataset;
+        const ok =
+          (!brand.value || d.brand === brand.value) &&
+          (!gearbox.value || d.gearbox === gearbox.value) &&
+          (!fuel.value || d.fuel === fuel.value) &&
+          Number(d.seats) >= Number(seats.value) &&
+          Number(d.price) <= Number(price.value);
+        c.classList.toggle('hidden', !ok);
+        if (ok) { n++; c.classList.add('in'); }
+      });
+      $('count').textContent = String(n);
+      $('empty').classList.toggle('hidden', n > 0);
+    }
+    [brand, gearbox, fuel, seats, price].forEach((el) => el.addEventListener('input', apply));
+    $('f-reset').addEventListener('click', () => {
+      brand.value = gearbox.value = fuel.value = ''; seats.value = '0'; price.value = price.max; apply();
+    });
+
+    // Collapse filters by default on small screens
+    if (window.matchMedia('(max-width: 1023px)').matches) $<HTMLDetailsElement>('filters').open = false;
+
+    // Carry the trip (pickup / dates) from the hero search over to the detail pages
+    const q = new URLSearchParams(location.search);
+    const pickup = q.get('pickup'), from = q.get('from'), to = q.get('to');
+    if (pickup || from || to) {
+      const keep = new URLSearchParams();
+      if (pickup) keep.set('pickup', pickup);
+      if (from) keep.set('from', from);
+      if (to) keep.set('to', to);
+      document.querySelectorAll<HTMLAnchorElement>('a[data-car-link]').forEach((a) => (a.search = keep.toString()));
+
+      const box = $('trip-summary');
+      const locs = JSON.parse(box.dataset.locs || '{}');
+      const lang = document.documentElement.lang;
+      const fmt = (s: string) => new Date(s + 'T00:00').toLocaleDateString(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+      const parts = [pickup && locs[pickup] ? `📍 ${locs[pickup]}` : '', from && to ? `📅 ${fmt(from)} → ${fmt(to)}` : ''].filter(Boolean);
+      box.textContent = parts.join('   ');
+      box.classList.toggle('hidden', !parts.length);
+    }
+  </script>
+</Layout>

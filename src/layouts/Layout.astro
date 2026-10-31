@@ -1,0 +1,93 @@
+---
+import '../styles/global.css';
+import { siteConfig, type Lang } from '../config/site.config';
+import { useT, waLink, fill, href, isRtl, asset } from '../i18n/ui';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+
+interface Props { lang: Lang; title?: string; description?: string; path?: string; image?: string }
+const { lang, title, description, path = '', image } = Astro.props;
+const t = useT(lang);
+const c = siteConfig.colors;
+const pageTitle = title ? `${title} — ${siteConfig.brand.name}` : `${siteConfig.brand.name} — ${siteConfig.brand.tagline[lang]}`;
+const desc = description ?? siteConfig.brand.tagline[lang];
+const dir = isRtl(lang) ? 'rtl' : 'ltr';
+const cssVars = `:root{--c-bg:${c.bg};--c-surface:${c.surface};--c-surface-high:${c.surfaceHigh};--c-border:${c.border};--c-text:${c.text};--c-muted:${c.muted};--c-faint:${c.faint};--c-accent:${c.accent};--c-on-accent:${c.onAccent};}`;
+const waGeneral = waLink(fill(t.wa.general, { brand: siteConfig.brand.name }));
+const site = Astro.site?.origin ?? '';
+---
+<!doctype html>
+<html lang={lang} dir={dir} class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={desc} />
+    <meta name="theme-color" content={c.bg} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:type" content="website" />
+    {image && <meta property="og:image" content={image} />}
+    {siteConfig.languages.map((l) => (
+      <link rel="alternate" hreflang={l.code} href={`${site}${href(l.code, path)}`} />
+    ))}
+    <link rel="icon" href={asset('/favicon.svg')} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500&family=Instrument+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400&display=swap"
+      rel="stylesheet"
+    />
+    <style set:html={cssVars}></style>
+    <script is:inline>document.documentElement.classList.remove('no-js')</script>
+  </head>
+  <body data-wa={siteConfig.whatsapp} data-brand={siteConfig.brand.name}>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:start-3 focus:z-[100] focus:bg-gold focus:text-on-gold focus:px-4 focus:py-2 focus:rounded-lg">{t.skip}</a>
+    <Header lang={lang} path={path} />
+    <main id="main"><slot /></main>
+    <Footer lang={lang} />
+
+    <a
+      href={waGeneral}
+      target="_blank"
+      rel="noopener"
+      aria-label={t.wa.float}
+      class="fixed bottom-6 end-6 z-50 grid place-items-center w-12 h-12 rounded-full bg-[#25d366] text-[#062b14] shadow-lg shadow-black/30 hover:bg-[#3be07a] active:scale-95 transition-[background-color,transform] duration-150"
+    >
+      <Icon name="whatsapp" class="w-7 h-7" />
+    </a>
+
+    <script>
+      // Scroll-reveal
+      const els = document.querySelectorAll<HTMLElement>('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }),
+          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+        );
+        els.forEach((el) => io.observe(el));
+      } else els.forEach((el) => el.classList.add('in'));
+
+      // Header background on scroll
+      const header = document.getElementById('site-header');
+      const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 24);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Mobile menu
+      const btn = document.getElementById('menu-btn');
+      const panel = document.getElementById('mobile-menu');
+      btn?.addEventListener('click', () => {
+        const open = panel?.classList.toggle('hidden') === false;
+        btn.setAttribute('aria-expanded', String(open));
+        btn.querySelector('.i-open')?.classList.toggle('hidden', open);
+        btn.querySelector('.i-close')?.classList.toggle('hidden', !open);
+      });
+      panel?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => { panel.classList.add('hidden'); btn?.setAttribute('aria-expanded', 'false'); btn?.querySelector('.i-open')?.classList.remove('hidden'); btn?.querySelector('.i-close')?.classList.add('hidden'); }));
+    </script>
+    <style is:global>
+      #site-header.is-scrolled { background: color-mix(in srgb, var(--c-bg) 94%, transparent); border-bottom-color: var(--c-border); }
+    </style>
+  </body>
+</html>

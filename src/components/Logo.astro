@@ -1,0 +1,16 @@
+---
+import { siteConfig } from '../config/site.config';
+import { asset } from '../i18n/ui';
+const b = siteConfig.brand;
+---
+<span class="inline-flex items-center gap-2">
+  {b.logoImage ? (
+    <img src={asset(b.logoImage)} alt={b.name} class="h-8 w-auto" />
+  ) : (
+    <svg class="w-6 h-6 text-gold" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 19 10 5l4 7 3-4.5L22 19z"/></svg>
+  )}
+  <span class="leading-none text-lg font-medium">
+    {b.name}
+    {b.suffix && <span class="text-muted font-normal ms-1.5">{b.suffix}</span>}
+  </span>
+</span>

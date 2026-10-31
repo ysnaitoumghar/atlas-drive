@@ -1,0 +1,278 @@
+[
+  {
+    "id": "dacia-logan",
+    "brand": "Dacia",
+    "model": "Logan",
+    "year": 2024,
+    "category": "economy",
+    "gearbox": "manual",
+    "fuel": "diesel",
+    "seats": 5,
+    "bags": 4,
+    "price": 250,
+    "featured": false,
+    "images": [
+      "1502877338535-766e1452684a",
+      "1542362567-b07e54358753",
+      "1533473359331-0135ef1b58bf"
+    ],
+    "desc": {
+      "fr": "Berline spacieuse et économique, idéale pour les trajets en famille et les longues distances.",
+      "en": "Spacious, fuel-efficient sedan — ideal for family trips and long distances.",
+      "ar": "سيارة سيدان واسعة واقتصادية، مثالية للرحلات العائلية والمسافات الطويلة."
+    }
+  },
+  {
+    "id": "renault-clio",
+    "brand": "Renault",
+    "model": "Clio 5",
+    "year": 2024,
+    "category": "economy",
+    "gearbox": "manual",
+    "fuel": "petrol",
+    "seats": 5,
+    "bags": 3,
+    "price": 300,
+    "featured": false,
+    "images": [
+      "1568605117036-5fe5e7bab0b7",
+      "1502877338535-766e1452684a",
+      "1542362567-b07e54358753"
+    ],
+    "desc": {
+      "fr": "Citadine agile et connectée, parfaite pour circuler en ville et explorer les médinas.",
+      "en": "Agile, connected city car — perfect for city driving and exploring the medinas.",
+      "ar": "سيارة مدينة رشيقة ومتصلة، مثالية للتنقل داخل المدينة واستكشاف المدن العتيقة."
+    }
+  },
+  {
+    "id": "peugeot-208",
+    "brand": "Peugeot",
+    "model": "208 GT",
+    "year": 2024,
+    "category": "economy",
+    "gearbox": "automatic",
+    "fuel": "petrol",
+    "seats": 5,
+    "bags": 3,
+    "price": 380,
+    "featured": false,
+    "images": [
+      "1609521263047-f8f205293f24",
+      "1568605117036-5fe5e7bab0b7",
+      "1533473359331-0135ef1b58bf"
+    ],
+    "desc": {
+      "fr": "Design félin et boîte automatique : le plaisir de conduire au quotidien.",
+      "en": "Sharp design and automatic gearbox — everyday driving pleasure.",
+      "ar": "تصميم أنيق وناقل أوتوماتيكي: متعة القيادة اليومية."
+    }
+  },
+  {
+    "id": "dacia-duster",
+    "brand": "Dacia",
+    "model": "Duster 4x4",
+    "year": 2024,
+    "category": "suv",
+    "gearbox": "manual",
+    "fuel": "diesel",
+    "seats": 5,
+    "bags": 5,
+    "price": 420,
+    "featured": true,
+    "images": [
+      "1519641471654-76ce0107ad1b",
+      "1606664515524-ed2f786a0bd6",
+      "1541899481282-d53bffe3c35d"
+    ],
+    "desc": {
+      "fr": "Le baroudeur idéal pour l'Atlas et le désert, robuste et généreux en espace.",
+      "en": "The ideal adventurer for the Atlas and the desert — rugged and roomy.",
+      "ar": "رفيق المغامرات المثالي لجبال الأطلس والصحراء، متين وواسع."
+    }
+  },
+  {
+    "id": "hyundai-tucson",
+    "brand": "Hyundai",
+    "model": "Tucson",
+    "year": 2024,
+    "category": "suv",
+    "gearbox": "automatic",
+    "fuel": "diesel",
+    "seats": 5,
+    "bags": 5,
+    "price": 550,
+    "featured": true,
+    "images": [
+      "1606016159991-dfe4f2746ad5",
+      "1519641471654-76ce0107ad1b",
+      "1606664515524-ed2f786a0bd6"
+    ],
+    "desc": {
+      "fr": "SUV moderne, confortable et très bien équipé pour voyager en toute sérénité.",
+      "en": "Modern, comfortable and well-equipped SUV for worry-free travel.",
+      "ar": "سيارة دفع رباعي عصرية ومريحة ومجهزة جيدًا للسفر بكل راحة."
+    }
+  },
+  {
+    "id": "vw-golf-8",
+    "brand": "Volkswagen",
+    "model": "Golf 8",
+    "year": 2024,
+    "category": "compact",
+    "gearbox": "automatic",
+    "fuel": "petrol",
+    "seats": 5,
+    "bags": 5,
+    "price": 480,
+    "featured": false,
+    "images": [
+      "1549317661-bd32c8ce0db2",
+      "1494976388531-d1058494cdd8",
+      "1552519507-da3b142c6e3d"
+    ],
+    "desc": {
+      "fr": "La référence des compactes : finition soignée, technologie et conduite précise.",
+      "en": "The compact benchmark — refined finish, tech and precise handling.",
+      "ar": "مرجع السيارات المدمجة: تشطيب أنيق وتقنيات متقدمة وقيادة دقيقة."
+    }
+  },
+  {
+    "id": "toyota-corolla-hybrid",
+    "brand": "Toyota",
+    "model": "Corolla Hybrid",
+    "year": 2024,
+    "category": "compact",
+    "gearbox": "automatic",
+    "fuel": "hybrid",
+    "seats": 5,
+    "bags": 5,
+    "price": 520,
+    "featured": false,
+    "images": [
+      "1617531653332-bd46c24f2068",
+      "1590362891991-f776e747a588",
+      "1563720223185-11003d516935"
+    ],
+    "desc": {
+      "fr": "Fiabilité légendaire et consommation minimale grâce à la motorisation hybride.",
+      "en": "Legendary reliability and minimal consumption thanks to the hybrid engine.",
+      "ar": "موثوقية أسطورية واستهلاك منخفض بفضل المحرك الهجين."
+    }
+  },
+  {
+    "id": "tesla-model-3",
+    "brand": "Tesla",
+    "model": "Model 3",
+    "year": 2024,
+    "category": "premium",
+    "gearbox": "automatic",
+    "fuel": "electric",
+    "seats": 5,
+    "bags": 4,
+    "price": 1300,
+    "featured": false,
+    "images": [
+      "1560958089-b8a1929cea89",
+      "1536700503339-1e4b06520771",
+      "1502877338535-766e1452684a"
+    ],
+    "desc": {
+      "fr": "Performance silencieuse et technologie de pointe, 100 % électrique.",
+      "en": "Silent performance and cutting-edge tech, 100% electric.",
+      "ar": "أداء هادئ وتقنية متطورة، كهربائية بالكامل."
+    }
+  },
+  {
+    "id": "mercedes-c-class",
+    "brand": "Mercedes-Benz",
+    "model": "Classe C",
+    "year": 2024,
+    "category": "premium",
+    "gearbox": "automatic",
+    "fuel": "diesel",
+    "seats": 5,
+    "bags": 4,
+    "price": 1100,
+    "featured": true,
+    "images": [
+      "1618843479313-40f8afb4b4d8",
+      "1544636331-e26879cd4d9b",
+      "1519641471654-76ce0107ad1b"
+    ],
+    "desc": {
+      "fr": "L'élégance allemande : intérieur raffiné, confort de référence, chauffeur en option.",
+      "en": "German elegance: refined interior and class-leading comfort. Chauffeur optional.",
+      "ar": "الأناقة الألمانية: مقصورة راقية وراحة استثنائية، مع إمكانية سائق خاص."
+    }
+  },
+  {
+    "id": "bmw-serie-3",
+    "brand": "BMW",
+    "model": "Série 3",
+    "year": 2024,
+    "category": "premium",
+    "gearbox": "automatic",
+    "fuel": "petrol",
+    "seats": 5,
+    "bags": 4,
+    "price": 1150,
+    "featured": false,
+    "images": [
+      "1555215695-3004980ad54e",
+      "1549317661-bd32c8ce0db2",
+      "1494976388531-d1058494cdd8"
+    ],
+    "desc": {
+      "fr": "Dynamisme sportif et luxe discret pour les conducteurs exigeants.",
+      "en": "Sporty dynamics and understated luxury for demanding drivers.",
+      "ar": "ديناميكية رياضية وفخامة هادئة للسائقين المتطلبين."
+    }
+  },
+  {
+    "id": "range-rover-sport",
+    "brand": "Land Rover",
+    "model": "Range Rover Sport",
+    "year": 2024,
+    "category": "luxury",
+    "gearbox": "automatic",
+    "fuel": "diesel",
+    "seats": 5,
+    "bags": 5,
+    "price": 1900,
+    "featured": true,
+    "images": [
+      "1541899481282-d53bffe3c35d",
+      "1606664515524-ed2f786a0bd6",
+      "1519641471654-76ce0107ad1b"
+    ],
+    "desc": {
+      "fr": "Le summum du SUV de luxe : puissance, prestige et confort absolu.",
+      "en": "The pinnacle of luxury SUVs — power, prestige and absolute comfort.",
+      "ar": "قمة سيارات الدفع الرباعي الفاخرة: قوة ومكانة وراحة مطلقة."
+    }
+  },
+  {
+    "id": "porsche-911",
+    "brand": "Porsche",
+    "model": "911 Carrera",
+    "year": 2023,
+    "category": "sport",
+    "gearbox": "automatic",
+    "fuel": "petrol",
+    "seats": 2,
+    "bags": 2,
+    "price": 4500,
+    "featured": true,
+    "images": [
+      "1503376780353-7e6692767b70",
+      "1580273916550-e323be2ae537",
+      "1583121274602-3e2820c69888"
+    ],
+    "desc": {
+      "fr": "L'icône sportive. Sensations pures sur les routes sinueuses du Haut Atlas.",
+      "en": "The sports-car icon. Pure thrills on the winding roads of the High Atlas.",
+      "ar": "أيقونة السيارات الرياضية. إثارة خالصة على طرق الأطلس الكبير المتعرجة."
+    }
+  }
+]
